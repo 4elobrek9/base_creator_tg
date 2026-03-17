@@ -66,7 +66,7 @@ def deep_parse_members(driver, conn, group_title):
     no_new_attempts = 0
     total_parsed = 0
     
-    while no_new_attempts < 7:
+    while no_new_attempts < 1:
         try:
             members = driver.find_elements(By.CSS_SELECTOR,
                 ".search-super-content-members .ListItem, "
@@ -156,9 +156,9 @@ def deep_parse_members(driver, conn, group_title):
             # Скролл участников
             try:
                 container = driver.find_element(By.CSS_SELECTOR, ".search-super-content-members .scrollable-y, .scrollable.scrollable-y")
-                driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight;", container)
+                driver.execute_script("arguments[0].scrollTop += 200;", container)
             except:
-                driver.execute_script("window.scrollBy(0, 2000);")
+                driver.execute_script("window.scrollBy(0, 20);")
             time.sleep(0.2)
         
         except Exception as e:
@@ -170,14 +170,14 @@ def deep_parse_members(driver, conn, group_title):
 def scroll_chat_list(driver):
     try:
         container = driver.find_element(By.CSS_SELECTOR, ".scrollable.scrollable-y.chatlist-parts, .scrollable.scrollable-y")
-        driver.execute_script("arguments[0].scrollTop += 1400;", container)
+        driver.execute_script("arguments[0].scrollTop += 140;", container)
         return True
     except:
-        driver.execute_script("window.scrollBy(0, 1400);")
+        driver.execute_script("window.scrollBy(0, 140);")
         return False
 
 def main():
-    console.print(Panel.fit("[bold cyan]TG DEEP BROWSER PARSER v2.9[/bold cyan]\n"
+    console.print(Panel.fit("[bold cyan]TG DEEP BROWSER PARSER v3.0[/bold cyan]\n"
                             "Оптимизация анализа профилей", border_style="cyan"))
     
     conn = init_db()
@@ -220,7 +220,7 @@ def main():
                     chat.click()
                     time.sleep(0.5)
                     
-                    header = WebDriverWait(driver, 7).until(
+                    header = WebDriverWait(driver, 1).until(
                         EC.element_to_be_clickable((By.CSS_SELECTOR, ".chat-info, .ChatInfo, .chat-header"))
                     )
                     header.click()
