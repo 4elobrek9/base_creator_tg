@@ -110,17 +110,17 @@ def deep_parse_members(driver, conn, group_title):
                     u_name = safe_get_text(driver,
                         "//div[contains(@class,'row-subtitle') and contains(.,'Username')]/preceding-sibling::div[@class='row-title']"
                         " | //div[@class='row-title' and following-sibling::div[contains(.,'Username')]]"
-                        " | //span[starts-with(normalize-space(.),'@')]"
                     )
                     
-                    # BIO
+                    # BIO — чистый текст без иконок
                     bio = safe_get_text(driver,
                         "//div[contains(@class,'profile-description') or contains(@class,'bio') or contains(@class,'about') or contains(@class,'pre-wrap')]"
                     )
                     
-                    # PHONE
-                    phone_raw = safe_get_text(driver, "//*[starts-with(normalize-space(text()),'+')]")
-                    phone = phone_raw if phone_raw.startswith('+') and len(phone_raw.replace(' ','').replace('-','')) >= 11 else "n/a"
+                    # PHONE — только настоящий номер
+                    phone = safe_get_text(driver, "//*[starts-with(text(),'+')]")
+                    if not (phone.startswith('+') and len(phone.replace(' ','').replace('-','')) >= 11):
+                        phone = "n/a"
                     
                     u_id = u_name if u_name != "n/a" else d_name
                     
@@ -140,9 +140,9 @@ def deep_parse_members(driver, conn, group_title):
                     
                     # Закрываем профиль
                     webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
-                    time.sleep(0.35)
-                    webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
-                    time.sleep(0.45)
+                    time.sleep(1.35)
+                    # webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+                    # time.sleep(1.45)
                     
                 except Exception as e:
                     console.print(f"[red]Ошибка на участнике {i+1}: {str(e)[:80]}[/red]")
