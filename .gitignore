@@ -1,0 +1,10 @@
+.venv
+chrome_profile
+chromedriver
+logs
+screenshots
+reports
+test-output
+*.log
+*.tmp
+*.bak

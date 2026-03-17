@@ -1,0 +1,91 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="Страница-1" id="HELt7r21cTcx9t8G-K4l">
+    <mxGraphModel dx="2046" dy="823" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-4" edge="1" parent="1" source="jYR-sI99nxfJxCARvJ7m-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="jYR-sI99nxfJxCARvJ7m-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="СТАРТ" vertex="1">
+          <mxGeometry height="60" width="120" x="354" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-13" edge="1" parent="1" source="jYR-sI99nxfJxCARvJ7m-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="jYR-sI99nxfJxCARvJ7m-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-26" edge="1" parent="1" source="jYR-sI99nxfJxCARvJ7m-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="jYR-sI99nxfJxCARvJ7m-25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-30" edge="1" parent="1" source="jYR-sI99nxfJxCARvJ7m-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" target="jYR-sI99nxfJxCARvJ7m-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-2" parent="1" style="shape=dataStorage;whiteSpace=wrap;html=1;fixedSize=1;" value="DB" vertex="1">
+          <mxGeometry height="80" width="100" x="364" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-7" edge="1" parent="1" source="jYR-sI99nxfJxCARvJ7m-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="jYR-sI99nxfJxCARvJ7m-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-19" edge="1" parent="1" source="jYR-sI99nxfJxCARvJ7m-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="jYR-sI99nxfJxCARvJ7m-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-3" parent="1" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" value="ВОПРОС ЧТО НУЖНО" vertex="1">
+          <mxGeometry height="60" width="120" x="354" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-8" edge="1" parent="1" source="jYR-sI99nxfJxCARvJ7m-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="jYR-sI99nxfJxCARvJ7m-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="АНАЛИЗ ВСЕХ ЧАТОВ И УЧАСТНИКОВ ЧАТОВ" vertex="1">
+          <mxGeometry height="60" width="120" x="354" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-11" edge="1" parent="1" source="jYR-sI99nxfJxCARvJ7m-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="jYR-sI99nxfJxCARvJ7m-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-6" parent="1" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" value="Создание таблицы с указанием номер | айди | о себе" vertex="1">
+          <mxGeometry height="145" width="120" x="354" y="525" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-12" parent="1" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" value="ПЕРЕВОД В excel" vertex="1">
+          <mxGeometry height="60" width="120" x="354" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-21" edge="1" parent="1" source="jYR-sI99nxfJxCARvJ7m-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="jYR-sI99nxfJxCARvJ7m-20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-18" parent="1" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" value="копирование чатов" vertex="1">
+          <mxGeometry height="60" width="120" x="180" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-24" edge="1" parent="1" source="jYR-sI99nxfJxCARvJ7m-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="jYR-sI99nxfJxCARvJ7m-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-20" parent="1" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" value="создание из html в txt чтобы весило меньше и анализ через AI" vertex="1">
+          <mxGeometry height="130" width="120" x="10" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-23" parent="1" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" value="вопрос ИИ связанный с чатами" vertex="1">
+          <mxGeometry height="60" width="120" x="-170" y="335" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-28" edge="1" parent="1" source="jYR-sI99nxfJxCARvJ7m-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="jYR-sI99nxfJxCARvJ7m-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-25" parent="1" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" value="ОБЗВОН по номерам&amp;nbsp; на проверку леквидности" vertex="1">
+          <mxGeometry height="60" width="120" x="130" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-27" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="таргет звонок" vertex="1">
+          <mxGeometry height="60" width="120" x="-70" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-31" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="ДЕЙСТВИЯ" vertex="1">
+          <mxGeometry height="240" width="140" x="-330" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-32" parent="jYR-sI99nxfJxCARvJ7m-31" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="узнать предварительно ИИшке о клиенте" vertex="1">
+          <mxGeometry height="60" width="140" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-33" parent="jYR-sI99nxfJxCARvJ7m-31" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="позвонить и представиться" vertex="1">
+          <mxGeometry height="60" width="140" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-34" parent="jYR-sI99nxfJxCARvJ7m-31" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="получить ответ или уломать" vertex="1">
+          <mxGeometry height="90" width="140" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="jYR-sI99nxfJxCARvJ7m-35" edge="1" parent="1" source="jYR-sI99nxfJxCARvJ7m-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.142;entryDx=0;entryDy=0;entryPerimeter=0;" target="jYR-sI99nxfJxCARvJ7m-31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
