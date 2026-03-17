@@ -62,90 +62,109 @@ def deep_parse_members(driver, conn, group_title):
     console.print(f"[bold green]Парсим участников: {group_title}[/bold green]")
     
     last_count = 0
-    scroll_attempts = 0
-    while scroll_attempts < 10:
-        members = driver.find_elements(By.CSS_SELECTOR,
-            ".search-super-content-members .chatlist-chat.row-clickable, "
-            ".search-super-content-members a.row-clickable"
-        )
-        
-        if len(members) == last_count:
-            scroll_attempts += 1
-        else:
-            scroll_attempts = 0
-        
-        for i in range(last_count, len(members)):
-            try:
-                driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", members[i])
-                time.sleep(0.8)
-                members[i].click()
-                time.sleep(2.1)
-                
-                # ИМЯ
-                d_name = safe_get_text(driver, 
-                    "//div[contains(@class,'profile-name')]//span[contains(@class,'peer-title')]"
-                    " | //div[contains(@class,'profile-title')]//span[1]"
-                    " | //span[contains(@class,'peer-title-inner')]"
-                )
-                
-                # USERNAME — только строка, которая начинается с @ и выглядит как ник
-                u_name_raw = safe_get_text(driver, 
-                    "//div[contains(@class,'profile-subtitle')]//span[starts-with(text(), '@')]"
-                    " | //div[contains(@class,'profile-subtitle-text')]//span[starts-with(text(), '@')]"
-                    " | //div[contains(@class,'username')]"
-                    " | //div[contains(@class,'profile-subtitle')]//span[contains(text(), '@')]"
-                )
-                
-                u_name = "n/a"
-                if '@' in u_name_raw:
-                    # берём всё после первого @ до первого пробела или конца строки
-                    parts = u_name_raw.split('@', 1)
-                    if len(parts) > 1:
-                        candidate = parts[1].strip().split()[0].rstrip('.,;')
-                        if candidate and len(candidate) >= 4 and not candidate.isdigit():
-                            u_name = candidate
-                
-                # BIO
-                bio = safe_get_text(driver, 
-                    "//div[contains(@class,'profile-description') or contains(@class,'bio') or contains(@class,'about')]"
-                    " | //div[contains(@class,'row-title') and contains(@class,'pre-wrap') and not(ancestor::div[contains(@class,'subtitle')])]"
-                    " | //div[contains(@class,'profile-bio') or contains(@class,'user-about')]"
-                )
-                
-                # PHONE — только реальные номера
-                phone_raw = safe_get_text(driver, 
-                    "//*[contains(@class,'profile-content') or contains(@class,'contact')]//*[starts-with(text(),'+')]"
-                )
-                phone = phone_raw if phone_raw.startswith('+') and any(c.isdigit() for c in phone_raw) and len(phone_raw.replace(' ','').replace('-','')) >= 11 else "n/a"
-                
-                u_id = u_name if u_name != "n/a" else d_name
-                
-                # Пропускаем совсем пустые / мусорные записи
-                if u_name == "n/a" and bio == "n/a" and phone == "n/a":
+    no_new_attempts = 0
+    total_parsed = 0
+    
+    while no_new_attempts < 7:
+        try:
+            members = driver.find_elements(By.CSS_SELECTOR,
+                ".search-super-content-members .ListItem, "
+                ".search-super-content-members .chatlist-chat, "
+                ".search-super-content-members .row-clickable, "
+                ".search-super-content-members a[href^='#']"
+            )
+            
+            console.print(f"[dim]Найдено элементов в списке участников: {len(members)}[/dim]")
+            
+            if len(members) == last_count:
+                no_new_attempts += 1
+            else:
+                no_new_attempts = 0
+            
+            for i in range(last_count, len(members)):
+                try:
+                    member = members[i]
+                    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", member)
+                    time.sleep(0.45)
+                    
+                    driver.execute_script("arguments[0].click();", member)
+                    time.sleep(0.9)
+                    
+                    # Ждём открытия профиля
+                    WebDriverWait(driver, 6).until(
+                        EC.presence_of_element_located((By.CSS_SELECTOR, ".profile-name, .peer-title-inner"))
+                    )
+                    time.sleep(0.5)
+                    
+                    # === ИМЯ — теперь берём только из профиля (не глобальный "Telegram") ===
+                    d_name = safe_get_text(driver,
+                        "//div[contains(@class,'profile-name')]//span[contains(@class,'peer-title') or contains(@class,'peer-title-inner')]"
+                        " | //span[contains(@class,'peer-title-inner') and ancestor::div[contains(@class,'profile-name') or contains(@class,'profile-avatars-info')]]"
+                    )
+                    
+                    # Если всё равно пусто — берём текст из самого элемента списка (запасной вариант)
+                    if not d_name or d_name == "Telegram":
+                        d_name = safe_get_text(driver, ".//span[contains(@class,'peer-title')]")  # fallback
+                    
+                    # USERNAME
+                    u_name = safe_get_text(driver,
+                        "//div[contains(@class,'row-subtitle') and contains(.,'Username')]/preceding-sibling::div[@class='row-title']"
+                        " | //div[@class='row-title' and following-sibling::div[contains(.,'Username')]]"
+                        " | //span[starts-with(normalize-space(.),'@')]"
+                    )
+                    
+                    # BIO
+                    bio = safe_get_text(driver,
+                        "//div[contains(@class,'profile-description') or contains(@class,'bio') or contains(@class,'about') or contains(@class,'pre-wrap')]"
+                    )
+                    
+                    # PHONE
+                    phone_raw = safe_get_text(driver, "//*[starts-with(normalize-space(text()),'+')]")
+                    phone = phone_raw if phone_raw.startswith('+') and len(phone_raw.replace(' ','').replace('-','')) >= 11 else "n/a"
+                    
+                    u_id = u_name if u_name != "n/a" else d_name
+                    
+                    # === УБРАЛИ СКИП "Telegram" ===
+                    # Теперь сохраняем всё, даже если имя "Telegram" (редко, но бывает)
+                    
+                    cursor.execute("""
+                        INSERT OR IGNORE INTO users 
+                        (group_name, display_name, username, phone, bio, user_id)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    """, (group_title, d_name, u_name, phone, bio, u_id))
+                    conn.commit()
+                    
+                    total_parsed += 1
+                    bio_short = (bio[:65] + "...") if len(bio) > 65 else bio
+                    console.print(f"[cyan]✓ {total_parsed} | {d_name} | @{u_name} | phone: {phone} | bio: {bio_short}[/cyan]")
+                    
+                    # Закрываем профиль
+                    webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+                    time.sleep(0.35)
+                    webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+                    time.sleep(0.45)
+                    
+                except Exception as e:
+                    console.print(f"[red]Ошибка на участнике {i+1}: {str(e)[:80]}[/red]")
                     webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
                     time.sleep(0.6)
                     continue
-                
-                cursor.execute("""
-                    INSERT OR IGNORE INTO users 
-                    (group_name, display_name, username, phone, bio, user_id)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                """, (group_title, d_name, u_name, phone, bio, u_id))
-                conn.commit()
-                
-                bio_preview = bio[:70] + "..." if len(bio) > 70 else bio
-                console.print(f"[cyan]✓ Спарсили:[/cyan] {d_name} | @{u_name} | phone: {phone} | bio: {bio_preview}")
-                
-                webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
-                time.sleep(0.9)
-                
-            except Exception as e:
-                continue
+            
+            last_count = len(members)
+            
+            # Скролл участников
+            try:
+                container = driver.find_element(By.CSS_SELECTOR, ".search-super-content-members .scrollable-y, .scrollable.scrollable-y")
+                driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight;", container)
+            except:
+                driver.execute_script("window.scrollBy(0, 2000);")
+            time.sleep(0.8)
         
-        last_count = len(members)
-        if members:
-            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", members[-1])
-        time.sleep(2.3)
+        except Exception as e:
+            console.print(f"[yellow]Ошибка в цикле: {str(e)[:80]}[/yellow]")
+            time.sleep(1.5)
+    
+    console.print(f"[green]Готово! Спарсили {total_parsed} участников[/green]")
 
 def scroll_chat_list(driver):
     try:
