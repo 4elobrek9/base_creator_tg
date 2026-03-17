@@ -41,15 +41,15 @@ def setup_browser():
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
     chrome_options.add_experimental_option('useAutomationExtension', False)
-    
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
     driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
         "source": "const newProto = navigator.__proto__; delete newProto.webdriver; navigator.__proto__ = newProto;"
     })
+    driver.implicitly_wait(0.2)
     return driver
 
-def safe_get_text(driver, xpath, timeout=4):
+def safe_get_text(driver, xpath, timeout=0.5):
     try:
         el = WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.XPATH, xpath)))
         text = el.text.strip()
@@ -60,7 +60,8 @@ def safe_get_text(driver, xpath, timeout=4):
 def deep_parse_members(driver, conn, group_title):
     cursor = conn.cursor()
     console.print(f"[bold green]Парсим участников: {group_title}[/bold green]")
-    
+
+
     last_count = 0
     no_new_attempts = 0
     total_parsed = 0
@@ -85,16 +86,17 @@ def deep_parse_members(driver, conn, group_title):
                 try:
                     member = members[i]
                     driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", member)
-                    time.sleep(0.45)
+                    time.sleep(0.05)          # ← было 0.45 → хватит 0.15 (скролл почти мгновенный)
                     
                     driver.execute_script("arguments[0].click();", member)
-                    time.sleep(0.9)
+                    # time.sleep(0.9)        # ← УДАЛЯЕМ полностью! 
+                    # WebDriverWait сам дождётся
                     
-                    # Ждём открытия профиля
-                    WebDriverWait(driver, 6).until(
+                    # === Ждём открытия профиля ===
+                    WebDriverWait(driver, 0.15).until(  # ← было 6 → теперь 1.5 (с запасом 7×)
                         EC.presence_of_element_located((By.CSS_SELECTOR, ".profile-name, .peer-title-inner"))
                     )
-                    time.sleep(0.5)
+                    time.sleep(0.10)          # ← было 0.5 → 0.10 достаточно для стабилизации DOM
                     
                     # === ИМЯ — теперь берём только из профиля (не глобальный "Telegram") ===
                     d_name = safe_get_text(driver,
@@ -103,8 +105,7 @@ def deep_parse_members(driver, conn, group_title):
                     )
                     
                     # Если всё равно пусто — берём текст из самого элемента списка (запасной вариант)
-                    if not d_name or d_name == "Telegram":
-                        d_name = safe_get_text(driver, ".//span[contains(@class,'peer-title')]")  # fallback
+
                     
                     # USERNAME
                     u_name = safe_get_text(driver,
@@ -140,7 +141,7 @@ def deep_parse_members(driver, conn, group_title):
                     
                     # Закрываем профиль
                     webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
-                    time.sleep(1.35)
+                    time.sleep(0.05)
                     # webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
                     # time.sleep(1.45)
                     
@@ -158,11 +159,11 @@ def deep_parse_members(driver, conn, group_title):
                 driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight;", container)
             except:
                 driver.execute_script("window.scrollBy(0, 2000);")
-            time.sleep(0.8)
+            time.sleep(0.2)
         
         except Exception as e:
             console.print(f"[yellow]Ошибка в цикле: {str(e)[:80]}[/yellow]")
-            time.sleep(1.5)
+            time.sleep(0.5)
     
     console.print(f"[green]Готово! Спарсили {total_parsed} участников[/green]")
 
@@ -176,8 +177,8 @@ def scroll_chat_list(driver):
         return False
 
 def main():
-    console.print(Panel.fit("[bold cyan]TG DEEP BROWSER PARSER v2.7[/bold cyan]\n"
-                            "Фикс username, phone и bio (по твоему последнему профилю)", border_style="cyan"))
+    console.print(Panel.fit("[bold cyan]TG DEEP BROWSER PARSER v2.9[/bold cyan]\n"
+                            "Оптимизация анализа профилей", border_style="cyan"))
     
     conn = init_db()
     driver = setup_browser()
@@ -186,7 +187,7 @@ def main():
         driver.get("https://web.telegram.org/k/")
         console.print("[yellow]✅ Браузер открыт. Залогинься и дождись загрузки.[/yellow]")
         input("\nНажми Enter, когда готов...")
-        time.sleep(6)
+        time.sleep(0.5)
         
         processed_groups = set()
         scroll_attempts = 0
@@ -217,27 +218,27 @@ def main():
                     console.print(f"[magenta]>>> Заходим в группу: {group_title} (ID: {peer_id})[/magenta]")
                     driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", chat)
                     chat.click()
-                    time.sleep(1.8)
+                    time.sleep(0.5)
                     
                     header = WebDriverWait(driver, 7).until(
                         EC.element_to_be_clickable((By.CSS_SELECTOR, ".chat-info, .ChatInfo, .chat-header"))
                     )
                     header.click()
-                    time.sleep(2.2)
+                    time.sleep(0.2)
                     
                     try:
                         members_btn = WebDriverWait(driver, 4).until(
                             EC.element_to_be_clickable((By.XPATH, "//*[contains(text(),'Участники') or contains(text(),'Members')]"))
                         )
                         members_btn.click()
-                        time.sleep(1.6)
+                        time.sleep(0.3)
                     except:
                         pass
                     
                     deep_parse_members(driver, conn, group_title)
                     
                     webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
-                    time.sleep(1.3)
+                    time.sleep(0.5)
                     
                 except:
                     continue
@@ -249,7 +250,7 @@ def main():
                     break
                 console.print(f"[dim]Прокрутка... (попытка {scroll_attempts}/15)[/dim]")
                 scroll_chat_list(driver)
-                time.sleep(3.8)
+                time.sleep(0.5)
     
     except Exception as e:
         console.print(f"[bold red]Ошибка: {e}[/bold red]")
